@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Store Order Dashboard Using FastAPI Cors</title>
+
+<style>
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f0f2f5;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #444;
+    }
+
+    .btn {
+        background: #4CAF50;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+        margin: 5px;
+        transition: 0.3s;
+    }
+
+    .btn:hover {
+        background: #45a049;
+    }
+
+    #orderContainer {
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 15px;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0px 3px 12px rgba(0,0,0,0.1);
+    }
+
+    .order-card h3 {
+        margin-top: 0;
+        color: #007BFF;
+    }
+
+    .loader {
+        display: none;
+        border: 5px solid #ddd;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    #count {
+        text-align: center;
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<body>
+
+<h2>📦 Store Order Dashboard Using FastAPI Cors</h2>
+
+<div style="text-align:center;">
+    <button class="btn" onclick="getOrders()">Refresh Orders</button>
+</div>
+
+<div id="count"></div>
+
+<div class="loader" id="loader"></div>
+
+<div id="orderContainer"></div>
+
+<script>
+    const apiBase = "http://127.0.0.1:8000";
+
+    // -----------------------------------
+    //  Fetch All Orders with UI Handling
+    // -----------------------------------
+    function getOrders() {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("orderContainer").innerHTML = "";
+
+        fetch(apiBase + "/order/all")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("loader").style.display = "none";
+                renderOrders(data);
+            })
+            .catch(err => {
+                document.getElementById("loader").style.display = "none";
+                alert("❌ Error fetching orders");
+            });
+    }
+
+    // -----------------------------------
+    //  Render Orders as Beautiful Cards
+    // -----------------------------------
+    function renderOrders(orderList) {
+        const container = document.getElementById("orderContainer");
+        const count = document.getElementById("count");
+
+        if (orderList.length === 0) {
+            count.innerHTML = "No orders found.";
+            return;
+        }
+
+        count.innerHTML = `Total Orders: <b>${orderList.length}</b>`;
+
+        orderList.forEach(order => {
+            const card = `
+                <div class="order-card">
+                    <h3>Order ID: ${order.id}</h3>
+                    <p><b>Customer:</b> ${order.customer_name}</p>
+                    <p><b>Item:</b> ${order.item}</p>
+                    <p><b>Quantity:</b> ${order.quantity}</p>
+                    <p><b>Status:</b> ${order.status}</p>
+                </div>
+            `;
+            container.innerHTML += card;
+        });
+    }
+</script>
+
+</body>
+</html>
+
+
+
