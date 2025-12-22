@@ -1,9 +1,7 @@
-### Tabels/order_tabel.py
-
 from sqlalchemy import Column, Integer, String
 from database import Base
 
-class Order_Tab(Base):
+class OrderTab(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -11,3 +9,4 @@ class Order_Tab(Base):
     item = Column(String, nullable=False)
     quantity = Column(Integer, nullable=False)
     status = Column(String, default="Processing")
+

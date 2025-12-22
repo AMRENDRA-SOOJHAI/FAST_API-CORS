@@ -1,81 +1,56 @@
-from fastapi import APIRouter, Depends
+"""Order management API router with CRUD operations."""
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-from Tabels.order_tabel import Order_Tab
+from Tabels.order_tabel import OrderTab
+from Pydantic_response.order_response import OrderResponse
 
 order_router = APIRouter(tags=["Orders"])
 
 
-def order_to_dict(order: Order_Tab) -> dict:
-    return {
-        "id": order.id,
-        "customer_name": order.customer_name,
-        "item": order.item,
-        "quantity": order.quantity,
-        "status": order.status,
-    }
-
-
-# CREATE ORDER
-@order_router.post("/order/create")
-async def create_order(customer_name: str, item: str, quantity: int, db: Session = Depends(get_db)):
-
-    new_order = Order_Tab(
+@order_router.post("/order/create", response_model=OrderResponse)
+async def create_order(
+    customer_name: str, item: str, quantity: int, db: Session = Depends(get_db)):
+    """Create a new order with processing status."""
+    new_order = OrderTab(
         customer_name=customer_name,
         item=item,
         quantity=quantity,
         status="Processing",
     )
-
     db.add(new_order)
     db.commit()
-
-    return {
-        "msg": "Order Created",
-        "order": order_to_dict(new_order)
-    }
+    return new_order
 
 
-
-# GET ALL ORDERS
-@order_router.get("/order/all")
+@order_router.get("/order/all", response_model=List[OrderResponse])
 async def get_all_orders(db: Session = Depends(get_db)):
-    orders = db.query(Order_Tab).all()
-    return [order_to_dict(i) for i in orders]
+    """Retrieve all orders from database."""
+    all_orders = db.query(OrderTab).all()
+    return all_orders
 
 
-# UPDATE ORDER
-
-@order_router.put("/order/update/{order_id}")
-async def update_order(order_id: int,status: str, quantity: int, db: Session = Depends(get_db)):
-    order = db.query(Order_Tab).filter(Order_Tab.id == order_id).first()
-    if not order:
-        return {"msg": "Order Not Found"}
-    
-    order.status = status
-    order.quantity = quantity
-
+@order_router.put("/order/update/{order_id}", response_model=OrderResponse)
+async def update_order(
+    order_id: int, status: str, quantity: int, db: Session = Depends(get_db)):
+    """Update order status and quantity by ID."""
+    order_update = db.query(OrderTab).filter(OrderTab.id == order_id).first()
+    if not order_update:
+        raise HTTPException(status_code=404, detail="Order not found")
+    order_update.status = status
+    order_update.quantity = quantity
     db.commit()
-
-    return {
-        "msg": "Order Updated", 
-        "order": order_to_dict(order)
-    }
+    return order_update
 
 
-# DELETE ORDER
 @order_router.delete("/order/cancel/{order_id}")
 async def cancel_order(order_id: int, db: Session = Depends(get_db)):
-    order = db.query(Order_Tab).filter(Order_Tab.id == order_id).first()
-
-    if not order:
-        return {"msg": "Order Not Found"}
-
-    db.delete(order)
+    """Delete/cancel order by ID."""
+    delete_order = db.query(OrderTab).filter(OrderTab.id == order_id).first()
+    if not delete_order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    db.delete(delete_order)
     db.commit()
-
-    return {
-        "msg": "Order Cancelled", 
-        "order_id": order_id
-    }
+    return {"msg": f"Order {order_id} cancelled successfully"}
 
