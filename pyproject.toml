@@ -1,19 +1,15 @@
-[project]
+[tool.poetry]
 name = "fast-api-cors"
 version = "0.1.0"
-description = "A modular FastAPI backend with full CORS support, built for an Order Management System. This project includes API routes for creating, updating, fetching, and deleting orders, integrated with SQLAlchemy and SQLite. It also provides a frontend UI (HTML/JS) that fetches order data from the backend using CORS-enabled endpoints. The project is structured cleanly with routers, database models, and environment-based configurations for scalable development."
-authors = [
-    {name = "AMRENDRA SINGH",email = "amrendra.singh@soojhai.in"}
-]
-license = {text = "Soojh_ai.in"}
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "fastapi[standard] (>=0.124.2,<0.125.0)",
-    "uvicorn[standard] (>=0.38.0,<0.39.0)",
-    "sqlalchemy (>=2.0.45,<3.0.0)"
-]
+description = "FastAPI backend with CORS support"
+authors = ["AMRENDRA SINGH <amrendra.singh@soojhai.in>"]
+license = "Soojh_ai.in"
 
+[tool.poetry.dependencies]
+python = ">=3.12"
+fastapi = "^0.124.2"
+uvicorn = {extras = ["standard"], version = "^0.38.0"}
+sqlalchemy = "^2.0.45"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -2,6 +2,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from orders.router import order_router
+import uvicorn
+
 # from database import Base, engine  # Uncommented to create tables if needed.
 
 # Create database tables
@@ -23,3 +25,5 @@ app.add_middleware(
 app.include_router(order_router)
 
 # Run with: uvicorn main:app --reload --host 0.0.0.0 --port 8000
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
