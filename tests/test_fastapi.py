@@ -8,6 +8,3 @@ def test_home_route():
     assert response.status_code == 200
     assert response.json() == {"msg": "Welcome To My Store"}
 
-
-
-
