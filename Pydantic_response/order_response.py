@@ -8,5 +8,5 @@ class OrderResponse(BaseModel):
     quantity: int
     status: str = "Processing"
 
-    class Config:
-        orm_mode = True  
+    # class Config:
+    #     orm_mode = True  
