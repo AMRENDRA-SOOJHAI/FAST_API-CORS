@@ -1,4 +1,4 @@
-# schemas.py (naya file banao ya router.py me add karo)
+# schemas.py
 from pydantic import BaseModel
 
 class OrderResponse(BaseModel):

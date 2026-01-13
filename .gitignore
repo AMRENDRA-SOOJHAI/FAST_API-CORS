@@ -14,4 +14,5 @@ venv/
 # Ignore VS Code settings 
 .vscode/
 
+.gitignore
 
